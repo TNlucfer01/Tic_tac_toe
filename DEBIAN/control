@@ -1,0 +1,9 @@
+Package: tic-tac-toe
+Version: 1.2
+Section: games
+Priority: optional
+Architecture: amd64
+Depends: libc6 (>= 2.3.0)
+Maintainer: aathi aathi671s@gmail.com
+Description: A simple Tic Tac Toe game
+ This is a description of the Tic Tac Toe game.

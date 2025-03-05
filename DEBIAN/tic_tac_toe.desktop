@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.1
+Name=Tic Tac Toe
+Comment=Play Tic Tac Toe
+Exec=/usr/local/bin/tic_tac_toe
+Icon=/usr/share/icons/hicolor/t.png
+Terminal=false
+Type=Application
+Categories=Game;
