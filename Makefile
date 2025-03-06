@@ -1,9 +1,9 @@
 # Variables for source file, output, and compiler options
-SRC = /home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/src/eg.c
+SRC = /home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/a/src/eg.c
 OUTPUT = tic_tac_toe
 
 # Compiler flags for Windows and Linux
-SDL2_CFLAGS = -I/usr/include/SDL2
+SDL2_CFLAGS = -I/usr/include/SDL2 
 SDL2_LIBS_LINUX = -lSDL2 -lwayland-client -lSDL2_mixer
 SDL2_LIBS_WINDOWS = -lSDL2 -lSDL2main -mwindows -lSDL2_mixer
 
@@ -16,13 +16,13 @@ all: detect-os
 # Target for Linux
 linux:
 	@echo "Compiling for Linux..."
-	gcc -o $(OUTPUT) $(SRC) $(SDL2_CFLAGS) $(SDL2_LIBS_LINUX)
+	gcc -o $(OUTPUT) $(SRC) $(SDL2_CFLAGS) $(SDL2_LIBS_LINUX) -lm
 	@echo "Done. You can run it with: ./$(OUTPUT)"
 
 # Target for Windows
 windows:
 	@echo "Compiling for Windows..."
-	x86_64-w64-mingw32-gcc -o $(OUTPUT).exe $(SRC) $(SDL2_CFLAGS) $(SDL2_LIBS_WINDOWS) -Dmain=SDL_main
+	x86_64-w64-mingw32-gcc -o $(OUTPUT).exe $(SRC) $(SDL2_CFLAGS) $(SDL2_LIBS_WINDOWS) -Dmain=SDL_main  -lm
 	@echo "Done. You can run the executable: $(OUTPUT).exe"
 
 # Detect the operating system and choose the appropriate target
