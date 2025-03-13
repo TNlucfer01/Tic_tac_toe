@@ -5,12 +5,21 @@
 #include<limits.h>
 #include<math.h>
 #include<ctype.h>
+
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 640
+
+#define MODE_PVP 0
+#define MODE_AI 1
 #define LINE_THICKNESS 5
 #define CELL_SIZE (SCREEN_WIDTH/3)
+#define EASY 0
+#define MEDIUM 1
+#define HARD 2
 
-
+int homeScreen = 1;  // 1 = Show home page, 0 = Start game
+   // -1 = Not selected, 0 = PvP, 1 = AI
+int difficulty = EASY;  // Default difficulty
 #define AI_PLAYER 1
 #define HUMAN_PLAYER 2
 
@@ -19,7 +28,7 @@ SDL_Renderer* renderer = NULL;
 SDL_Texture* texture=NULL;
 SDL_Rect imager={0,0,SCREEN_HEIGHT,SCREEN_WIDTH};
 SDL_Surface* surface=NULL;
-
+int gameMode = -1; 
 
 typedef struct {
   int board[3][3];  // 0 = empty, 1 = player1 (X), 2 = player2 (O)
@@ -39,6 +48,10 @@ void easyAi(GameState* GameState);
 void mediumAI(GameState* GameState);
 int aiChose(char choice[10],GameState* GameState);
 void toLowerStr(char *str);
+
+
+void handleMenuClick(int x, int y);
+void renderFrontPage(SDL_Renderer *renderer);
 
 void bestMove(GameState* gameState);
 int miniMax(GameState gamestate, int depth, int isMax);
@@ -147,14 +160,16 @@ void handleMouseClick(GameState* gameState, int x, int y) {
     
     }
     else {
+        gameState->currentPlayer = (gameState->currentPlayer == 1) ? 2 : 1;  // Switch players bc
             //gameState->currentPlayer = (gameState->currentPlayer == 1) ? 2 : 1;  // Switch players
-            if (gameState->currentPlayer == HUMAN_PLAYER) {
+            /*if (gameState->currentPlayer == HUMAN_PLAYER) {
                 gameState->currentPlayer = AI_PLAYER;
                 bestMove(gameState);
-            }
+                  }
             else {
                 gameState->currentPlayer = 1;
-            }
+            }*/
+          
             
         } 
     }
@@ -359,8 +374,46 @@ void resetGame(GameState* gameState) {
         }
     }
 }
+void renderHomePage(SDL_Renderer *renderer) {
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);  // Black background
+    SDL_RenderClear(renderer);
 
-/* Main Function */
+    SDL_Rect continueButton = {100, 50, 200, 50};
+    SDL_Rect newGameButton = {100, 120, 200, 50};
+    SDL_Rect optionsButton = {100, 190, 200, 50};
+    SDL_Rect exitButton = {100, 260, 200, 50};
+
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);  // Green for Continue
+    SDL_RenderFillRect(renderer, &continueButton);
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);  // Blue for New Game
+    SDL_RenderFillRect(renderer, &newGameButton);
+
+    SDL_SetRenderDrawColor(renderer, 255, 165, 0, 255);  // Orange for Options
+    SDL_RenderFillRect(renderer, &optionsButton);
+
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Red for Exit
+    SDL_RenderFillRect(renderer, &exitButton);
+
+    SDL_RenderPresent(renderer);
+    SDL_Delay(10000);
+}
+void handleHomeClick(int x, int y) {
+    if (x >= 100 && x <= 300) {
+        if (y >= 50 && y <= 100) {
+            homeScreen = 0;  // Continue the last game
+        } else if (y >= 120 && y <= 170) {
+            homeScreen = 0;
+            gameMode = -1;  // Go to mode selection
+        } else if (y >= 190 && y <= 240) {
+            printf("Options selected: Change AI difficulty.\n");
+            // Implement difficulty selection here
+        } else if (y >= 260 && y <= 310) {
+            exit(0);  // Exit game
+        }
+    }
+}
+
 int main(int argc, char* args[]) {
     if (!initSDL()) {
         printf("Failed to initialize!\n");
@@ -378,11 +431,24 @@ int main(int argc, char* args[]) {
             } else if (e.type == SDL_MOUSEBUTTONDOWN) {
                 int x, y;
                 SDL_GetMouseState(&x, &y);
-                handleMouseClick(&gameState, x, y);
+                if (homeScreen) {
+                    handleHomeClick(x, y);
+                } else if (gameMode == -1) {
+                    handleMenuClick(x, y);  // Mode selection
+                } else {
+                    handleMouseClick(&gameState, x, y);  // Game logic
+                }
             }
         }
-        
-        renderGame(&gameState);
+
+        if (homeScreen) {
+            renderHomePage(renderer);
+        } else if (gameMode == -1) {
+            renderFrontPage(renderer);  // Show mode selection
+        } else {
+            renderGame(&gameState);  // Start game
+        }
+
         SDL_Delay(100);
     }
 
@@ -390,6 +456,43 @@ int main(int argc, char* args[]) {
     return 0;
 }
 
+/* Main Function 
+int main(int argc, char* args[]) {
+    if (!initSDL()) {
+        printf("Failed to initialize!\n");
+        return -1;
+    }
+    
+    GameState gameState;
+    resetGame(&gameState);
+    
+    while (gameState.isRunning) {
+        SDL_Event e;
+        while (SDL_PollEvent(&e) != 0) {
+            if (e.type == SDL_QUIT) {
+                gameState.isRunning = false;
+            } else if (e.type == SDL_MOUSEBUTTONDOWN ) {
+                int x, y;
+                SDL_GetMouseState(&x, &y);
+                if(gameMode==-1) {
+                    handleMenuClick(x, y);
+                } else {
+                handleMouseClick(&gameState, x, y);
+                }
+            }
+        }
+        if(gameMode==-1) {
+            renderFrontPage(renderer);
+        } else {
+        renderGame(&gameState);
+        }
+        SDL_Delay(100);
+    }
+
+    closeSDL();
+    return 0;
+}
+*/
 
 void bestMove(GameState* gameState) {
     int bestScore = INT_MIN;
@@ -417,6 +520,9 @@ void bestMove(GameState* gameState) {
         gameState->board[moveRow][moveCol] = AI_PLAYER; // Make the best move
     }
 }
+
+
+
 
 int miniMax(GameState gamestate, int depth, int isMax) {
     int score = evaluate(gamestate);
