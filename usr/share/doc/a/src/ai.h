@@ -88,7 +88,8 @@ void easyAi(GameState* GameState){
         row=rand()%3;
         col=rand()%3;
 
-    }while(GameState->board[row][col]!=0);
+    }
+    while(GameState->board[row][col]!=0);
     GameState->board[row][col]=GameState->currentPlayer;
 }
 
@@ -144,22 +145,22 @@ void toLowerStr(char *str) {
 }
 
 
-int aiChose(char choice[10],GameState* GameState){
- toLowerStr(choice);
-    if(strcmp("easy",choice)==0){
-        easyAi(GameState);     
+void call_ai(GameState* GameState) {
+    switch (difficulty) {
+        case EASY:
+            easyAi(GameState);
+            break;
+        case MEDIUM:
+            mediumAI(GameState);
+            break;
+        case HARD:
+            bestMove(GameState);
+            break;
     }
-    else if (strcmp("medium",choice)==0){
-        mediumAI(GameState);
-    }  
-else if(strcmp("hard",choice)){
-    bestMove(GameState);
-    return 3;
 }
-else{
-    printf("enter a valid choice");
-    return 0;
-}}
+
+
+
 void bestMove(GameState* gameState) {
     int bestScore = INT_MIN;
     int moveRow = -1, moveCol = -1;
@@ -186,5 +187,7 @@ void bestMove(GameState* gameState) {
         gameState->board[moveRow][moveCol] = AI_PLAYER; // Make the best move
     }
 }
+
+
 
 
