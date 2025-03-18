@@ -7,23 +7,33 @@
 #include"utlity.h"
 #include<ctype.h>
 
-int miniMax(GameState gamestate, int depth, int isMax) {
-    int score = evaluate(gamestate);
+
+float get_score(GameState* GameState, int row, int col);
+void easyAi(GameState* GameState);
+void mediumAI(GameState* GameState);
+int aiChose(char choice[10],GameState* GameState);
+void toLowerStr(char *str);
+void bestMove(GameState* gameState);
+int miniMax(GameState *gamestate, int depth, int isMax);
+int evaluate(GameState game);
+
+int miniMax(GameState *gamestate, int depth, int isMax) {
+    int score = evaluate(*gamestate);
     
     // Base cases (terminal states)
     if (score == 10) return score - depth; // Favor quick wins
     if (score == -10) return score + depth; // Delay opponent win
-    if (isfull(gamestate)) return 0; // Draw
+    if (isfull(*gamestate)) return 0; // Draw
     
     // Maximizing player (AI)
     if (isMax) {
         int best = INT_MIN;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (gamestate.board[i][j] == 0) {  // Check empty space
-                    gamestate.board[i][j] = AI_PLAYER;
+                if (gamestate->board[i][j] == 0) {  // Check empty space
+                    gamestate->board[i][j] = AI_PLAYER;
                     best = fmax(best, miniMax(gamestate, depth + 1, 0));
-                    gamestate.board[i][j] = 0; // Undo move
+                    gamestate->board[i][j] = 0; // Undo move
                 }
             }
         }
@@ -34,16 +44,17 @@ int miniMax(GameState gamestate, int depth, int isMax) {
         int best = INT_MAX;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (gamestate.board[i][j] == 0) {  // Check empty space
-                    gamestate.board[i][j] = HUMAN_PLAYER;
+                if (gamestate->board[i][j] == 0) {  // Check empty space
+                    gamestate->board[i][j] = HUMAN_PLAYER;
                     best = fmin(best, miniMax(gamestate, depth + 1, 1));
-                    gamestate.board[i][j] = 0; // Undo move
+                    gamestate->board[i][j] = 0; // Undo move
                 }
             }
         }
         return best;
     }
 }
+
 
 int evaluate(GameState game) {
     // Check rows for victory
@@ -169,7 +180,7 @@ void bestMove(GameState* gameState) {
         for (int j = 0; j < 3; j++) {
             if (gameState->board[i][j] == 0) { // Check empty spot
                 gameState->board[i][j] = AI_PLAYER; // Simulate AI move
-                int score = miniMax(*gameState, 0, 0); // Call minimax
+                int score = miniMax(gameState, 0, 0); // Call minimax
                 gameState->board[i][j] = 0; // Undo move
 
                 if (score > bestScore) { // Find max score

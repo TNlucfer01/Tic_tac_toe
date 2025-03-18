@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include<SDL2/SDL.h>
 #include <SDL2/SDL_main.h>
+#include<SDL2/SDL_mixer.h>
 #include<limits.h>
 #include<math.h>
 #include<ctype.h>
@@ -231,41 +232,40 @@ void handleMouseClick(GameState* gameState, int x, int y) {
     if (gameState->board[row][col] == 0) {  // Only allow moves in empty cells
         gameState->board[row][col] = gameState->currentPlayer;
 
-        if(WinorNot(gameState)) {
-            surface=SDL_LoadBMP("/home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/assets/image/tic_win.bmp");
-            texture=SDL_CreateTextureFromSurface(renderer,surface);
+        renderGame(gameState); // Immediately update the board so the human move is visible.
+
+        if (WinorNot(gameState)) {
+            surface = SDL_LoadBMP("/home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/assets/image/tic_win.bmp");
+            texture = SDL_CreateTextureFromSurface(renderer, surface);
             SDL_FreeSurface(surface);
             SDL_RenderClear(renderer);
-            SDL_RenderCopy(renderer,texture,NULL,&imager);
+            SDL_RenderCopy(renderer, texture, NULL, &imager);
             SDL_RenderPresent(renderer);
             SDL_Delay(2000);
             printf("Player %d wins!\n", gameState->currentPlayer);
             gameState->isRunning = false;  // Stop the game
         }  
-        else if (isfull((*gameState))==1)
-    {      SDL_Delay(1000);
-        surface=SDL_LoadBMP("/home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/assets/image/tic_tac_toe_draw.bmp");
-        texture=SDL_CreateTextureFromSurface(renderer,surface);
-        SDL_FreeSurface(surface);
-        SDL_RenderClear(renderer);
-        SDL_RenderCopy(renderer, texture, NULL, NULL);
-        SDL_RenderPresent(renderer);
+        else if (isfull((*gameState)) == 1) {
+            SDL_Delay(1000);
+            surface = SDL_LoadBMP("/home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/assets/image/tic_tac_toe_draw.bmp");
+            texture = SDL_CreateTextureFromSurface(renderer, surface);
+            SDL_FreeSurface(surface);
+            SDL_RenderClear(renderer);
+            SDL_RenderCopy(renderer, texture, NULL, NULL);
+            SDL_RenderPresent(renderer);
             SDL_Delay(4000);
-        gameState->isRunning=false;
-    
-    }
-    else {
-        //gameState->currentPlayer = (gameState->currentPlayer == 1) ? 2 : 1;  // Switch players bc
-            //gameState->currentPlayer = (gameState->currentPlayer == 1) ? 2 : 1;  // Switch players
-           if (gameState->currentPlayer == HUMAN_PLAYER) {
-            bestMove(gameState);  // AI makes a move
+            gameState->isRunning = false;
+        }
+        else {
+            // Switch to AI turn before calling bestMove()
+            if (gameState->currentPlayer == HUMAN_PLAYER) {
+                gameState->currentPlayer = AI_PLAYER;
+                SDL_Delay(500);  // Add a delay so the human move is visible
+                bestMove(gameState);  // AI makes a move
+                renderGame(gameState); // Update the board again after AI move
+                gameState->currentPlayer = HUMAN_PLAYER; // Switch back to human after AI move
             }
-
-// Switch turn after move
-            gameState->currentPlayer = (gameState->currentPlayer == HUMAN_PLAYER) ? AI_PLAYER : HUMAN_PLAYER;
-
-            
-        } 
+        }
     }
 }
 
@@ -623,6 +623,7 @@ void bestMove(GameState* gameState) {
     {
         gameState->board[moveRow][moveCol] = AI_PLAYER; // Make the best move
     }
+    SDL_Delay(700);
 }
 
 
