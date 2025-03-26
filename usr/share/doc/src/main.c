@@ -49,6 +49,7 @@ SDL_Renderer* renderer = NULL;
 SDL_Texture* texture=NULL;
 SDL_Rect imager={0,0,SCREEN_HEIGHT,SCREEN_WIDTH};
 SDL_Surface* surface=NULL;
+SDL_Surface* game = NULL;
 Mix_Music *music = NULL;
 int gameMode = -1; 
 
@@ -164,10 +165,16 @@ void stopSong();
             win:
             if(gameState->currentPlayer==AI_PLAYER){
                 SDL_Delay(2000);
-            surface = SDL_LoadBMP("../assets/image/AI_Win.bmp");}
-            else surface=SDL_LoadBMP("../assets/image/tic_Win.bmp");
-            texture = SDL_CreateTextureFromSurface(renderer, surface);
-            SDL_FreeSurface(surface);
+            game = SDL_LoadBMP("../assets/image/O_win.bmp");}
+            else game=SDL_LoadBMP("../assets/image/X_win.bmp");
+            if (!game) {
+                printf("Error loading image: %s\n", SDL_GetError());
+}
+            texture = SDL_CreateTextureFromSurface(renderer, game);
+            if (!texture) {
+                printf("Error creating texture: %s\n", SDL_GetError());
+            }    
+            SDL_FreeSurface(game);
             SDL_RenderClear(renderer);
             SDL_RenderCopy(renderer, texture, NULL, &imager);
             SDL_RenderPresent(renderer);
@@ -177,9 +184,12 @@ void stopSong();
         }  
         else if (isfull((*gameState)) == 1) {
             SDL_Delay(1000);
-            surface = SDL_LoadBMP("/home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/assets/image/tic_tac_toe_draw.bmp");
-            texture = SDL_CreateTextureFromSurface(renderer, surface);
-            SDL_FreeSurface(surface);
+            game = SDL_LoadBMP("../assets/image/tic_tac_toe_draw.bmp");
+            texture = SDL_CreateTextureFromSurface(renderer, game);
+            if (!texture) {
+    printf("Error creating texture: %s\n", SDL_GetError());
+}
+            SDL_FreeSurface(game);
             SDL_RenderClear(renderer);
             SDL_RenderCopy(renderer, texture, NULL, NULL);
             SDL_RenderPresent(renderer);
