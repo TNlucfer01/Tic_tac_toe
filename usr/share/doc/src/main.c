@@ -617,7 +617,6 @@ void bestMove(GameState* gameState) {
         gameState->board[moveRow][moveCol] = AI_PLAYER; // Make the best move
     }
     SDL_Delay(700);
-    SDL_Log("AI move: %d, %d\n", moveRow, moveCol); 
 }
 
 
@@ -625,7 +624,6 @@ void bestMove(GameState* gameState) {
 
 int miniMax(GameState *gamestate, int depth, int isMax) {
     int score = evaluate(*gamestate);
-    SDL_Log(" this is minimax");
     // Base cases (terminal states)
     if (score == 10) return score - depth; // Favor quick wins
     if (score == -10) return score + depth; // Delay opponent win

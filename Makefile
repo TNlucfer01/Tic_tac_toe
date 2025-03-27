@@ -1,5 +1,5 @@
 # Variables for source file, output, and compiler options
-SRC = /home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/a/src/eg.c
+SRC = /home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/src/main.c
 OUTPUT = tic_tac_toe
 
 # Compiler flags for Windows and Linux
