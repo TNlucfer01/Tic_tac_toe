@@ -1,6 +1,6 @@
 # Variables for source file, output, and compiler options
 SRC = /home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/src/main.c
-OUTPUT = tic_tac_toe
+OUTPUT = usr/local/bin/tic_tac_toe
 
 # Compiler flags for Windows and Linux
 SDL2_CFLAGS = -I/usr/include/SDL2 

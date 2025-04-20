@@ -101,7 +101,7 @@ void stopSong();
         }
         
         window = SDL_CreateWindow("Tic-Tac-Toe", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-        surface =SDL_LoadBMP("TIC_TAC_TOE/usr/share/doc/assets/image/t.bmp");
+        surface =SDL_LoadBMP("../../share/doc/assets/image/t.bmp");
         SDL_SetWindowIcon(window,surface);
          // Initialize SDL_mixer
         if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
@@ -126,7 +126,7 @@ void stopSong();
             printf("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
             return false;
         }
-        playSong("../assets/music/monster.mp3");
+        playSong("../../share/doc/assets/music/monster.mp3");
         
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         
@@ -165,8 +165,8 @@ void stopSong();
             win:
             if(gameState->currentPlayer==AI_PLAYER){
                 SDL_Delay(2000);
-            game = SDL_LoadBMP("../assets/image/O_win.bmp");}
-            else game=SDL_LoadBMP("../assets/image/X_win.bmp");
+            game = SDL_LoadBMP("../../share/doc/assets/image/O_win.bmp");}
+            else game=SDL_LoadBMP("../../share/doc/assets/image/X_win.bmp");
             if (!game) {
                 printf("Error loading image: %s\n", SDL_GetError());
 }
@@ -184,7 +184,7 @@ void stopSong();
         }  
         else if (isfull((*gameState)) == 1) {
             SDL_Delay(1000);
-            game = SDL_LoadBMP("../assets/image/tic_tac_toe_draw.bmp");
+            game = SDL_LoadBMP("../../share/doc/assets/image/tic_tac_toe_draw.bmp");
             texture = SDL_CreateTextureFromSurface(renderer, game);
             if (!texture) {
     printf("Error creating texture: %s\n", SDL_GetError());
@@ -788,4 +788,6 @@ else{
     int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
         return main(__argc, __argv);
     }
-    #endif
+ 
+
+#endif

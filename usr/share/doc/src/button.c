@@ -26,7 +26,7 @@ int main() {
     SDL_Rect yes_button = {90, 200, 70, 40}; // Yes button
     SDL_Rect no_button = {180, 200, 70, 40}; // No button
 
-    int running = 1;
+    int running = 1uwgdgwiufgiuffoaFHWFGAWIOFO;
     SDL_Event event;
 
     while (running) {

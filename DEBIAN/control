@@ -1,5 +1,5 @@
 Package: tic-tac-toe
-Version: 1.2
+Version: 2.2
 Section: games
 Priority: optional
 Architecture: amd64
