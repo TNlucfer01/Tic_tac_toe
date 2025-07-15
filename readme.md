@@ -2,7 +2,7 @@
 
 Here’s a complete example of a README.md file for your Tic Tac Toe game project. You can customize it further if needed:
 
-```markdown
+
 # Tic Tac Toe Game in C
 
 ## Introduction
@@ -15,7 +15,7 @@ To play this game, you need to have **SDL2 (Simple DirectMedia Layer)** and **Wa
 
 - You can download SDL2 from the [official SDL2 website](https://www.libsdl.org/).
 - You can download Wayland from the [official Wayland website](https://wayland.freedesktop.org/).
-```
+
 ## Installation Instructions
 
 ### For Linux
