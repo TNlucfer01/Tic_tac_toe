@@ -1,6 +1,5 @@
 
 
-Here’s a complete example of a README.md file for your Tic Tac Toe game project. You can customize it further if needed:
 
 
 # Tic Tac Toe Game in C
