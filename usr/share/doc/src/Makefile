@@ -1,13 +1,13 @@
 # Variables for source file, output, and compiler options
-SRC = /home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/src/main.c
-OUTPUT = ../../../local/bin/tic_tac_toe
+SRC = /home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/src/eg.c
+OUTPUT = a
 
 # Compiler flags for Windows and Linux
 SDL2_CFLAGS = -I/usr/include/SDL2 
-SDL2_LIBS_LINUX = -lSDL2 -lwayland-client -lSDL2_mixer  -lm
-SDL2_LIBS_WINDOWS = -lSDL2 -lSDL2main -mwindows -lSDL2_mixer  -lm
+SDL2_LIBS_LINUX = -lSDL2 -lwayland-client -lSDL2_mixer
+SDL2_LIBS_WINDOWS = -lSDL2 -lSDL2main -mwindows -lSDL2_mixer
 
-# De  it   ermine the platform using uname
+# Determine the platform using uname
 UNAME := $(shell uname)
 
 # Default target (decides which platform to compile for)

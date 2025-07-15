@@ -1,4 +1,4 @@
-/*
+    /*
     Tic-Tac-Toe Game - A simple graphical Tic-Tac-Toe game using SDL.
 
     Copyright (C) 2024  Aathi
@@ -16,80 +16,48 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <stdbool.h>
-#include <stdio.h>
-#include<SDL2/SDL.h>
-#include <SDL2/SDL_main.h>
-#include<SDL2/SDL_mixer.h>
-#include<limits.h>
-#include<math.h>
-#include<ctype.h>
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 640
+   #include <stdbool.h>
+   
+    #include <stdio.h>
+    #include<SDL2/SDL.h>
+    #include<SDL2/SDL_mixer.h>
+    #include<string.h>
+    #define SCREEN_WIDTH 640
+    #define SCREEN_HEIGHT 640
+    #define LINE_THICKNESS 5
+    #define CELL_SIZE (SCREEN_WIDTH/3)
 
-#define MODE_PVP 0
-#define MODE_AI 1
-#define LINE_THICKNESS 5
-#define CELL_SIZE (SCREEN_WIDTH/3)
-#define EASY 0
-#define MEDIUM 1
-#define HARD 2
+    SDL_Window* window = NULL;
+    SDL_Renderer* renderer = NULL;
+    SDL_Texture* texture=NULL;
+    SDL_Rect imager={0,0,SCREEN_HEIGHT,SCREEN_WIDTH};
+    SDL_Surface* surface=NULL;
+    Mix_Music* music=NULL;
 
-int homeScreen = 1;  // 1 = Show home page, 0 = Start game
-   // -1 = Not selected, 0 = PvP, 1 = AI
-int difficulty = EASY;  // Default difficulty
-#define AI_PLAYER  2 
-#define HUMAN_PLAYER 1
+    typedef struct {
+        int board[3][3];  // 0 = empty, 1 = player1 (X), 2 = player2 (O)
+        int currentPlayer;
+        bool isRunning;
+    } GameState;
 
+    void playSong();
+    /* Function Prototypes */
+    void stopsong();
+    bool initSDL();
+    void closeSDL();
+    void handleMouseClick(GameState* gameState, int x, int y);
+    void renderGame(GameState* gameState);
+    void drawGrid();
+    void drawSymbols(GameState* gameState);
+    void draw_X(int row, int col);
+    void draw_O(int row, int col);
+    void draw_circle(SDL_Renderer* renderer, int centerX, int centerY, int radius); 
+    void draw_thick_circle(SDL_Renderer* renderer, int centerX, int centerY, int radius, int thickness); 
+    int checkWin(GameState* gameState);
+    void resetGame(GameState* gameState);
+    int isfull(GameState* game);
 
-
-SDL_Window* window = NULL;
-SDL_Renderer* renderer = NULL;
-SDL_Texture* texture=NULL;
-SDL_Rect imager={0,0,SCREEN_HEIGHT,SCREEN_WIDTH};
-SDL_Surface* surface=NULL;
-SDL_Surface* game = NULL;
-Mix_Music *music = NULL;
-int gameMode = -1; 
-
-typedef struct {
-  int board[3][3];  // 0 = empty, 1 = player1 (X), 2 = player2 (O)
-    unsigned int currentPlayer;
-    bool isRunning;
-} GameState;
-
-
-/* Function Prototypes */
-bool initSDL();
-void closeSDL();
-void handleMouseClick(GameState* gameState, int x, int y);
-void renderGame(GameState* gameState);
-void drawGrid();
-float get_score(GameState* GameState, int row, int col);
-void easyAi(GameState* GameState);
-void mediumAI(GameState* GameState);
-int aiChose(char choice[10],GameState* GameState);
-void toLowerStr(char *str);
-
-
-void handleMenuClick(int x, int y);
-void renderFrontPage(SDL_Renderer *renderer);
-
-void bestMove(GameState* gameState);
-int miniMax(GameState *gamestate, int depth, int isMax);
-int evaluate(GameState game);
-void drawSymbols(GameState* gameState);
-void draw_X(int row, int col);
-void draw_O(int row, int col);
-int playagain();
-void draw_circle(SDL_Renderer* renderer, int centerX, int centerY, int radius); 
-void draw_thick_circle(SDL_Renderer* renderer, int centerX, int centerY, int radius, int thickness); 
-int WinorNot(GameState* gameState);
-void resetGame(GameState* gameState);
-int isfull(GameState game);
-void playSong(const char *songName);
-void stopSong();
     /**
      *   SDL Initialization 
      * it creates the window and the renderer for the game 
@@ -101,7 +69,7 @@ void stopSong();
         }
         
         window = SDL_CreateWindow("Tic-Tac-Toe", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-        surface =SDL_LoadBMP("../../share/doc/assets/image/t.bmp");
+        surface =SDL_LoadBMP("TIC_TAC_TOE/usr/share/doc/assets/image/t.bmp");
         SDL_SetWindowIcon(window,surface);
          // Initialize SDL_mixer
         if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
@@ -126,7 +94,7 @@ void stopSong();
             printf("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
             return false;
         }
-        playSong("../../share/doc/assets/music/monster.mp3");
+        playSong("../assets/music/monster.mp3");
         
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         
@@ -156,58 +124,33 @@ void stopSong();
         int row = y / CELL_SIZE;
         int col = x / CELL_SIZE;
 
-    if (gameState->board[row][col] == 0) {  // Only allow moves in empty cells
-        gameState->board[row][col] = gameState->currentPlayer;
+        if (gameState->board[row][col] == 0) {  // Only allow moves in empty cells
+            gameState->board[row][col] = gameState->currentPlayer;
 
-        renderGame(gameState); // Immediately update the board so the human move is visible.
-
-        if ( WinorNot(gameState)) {
-            win:
-            if(gameState->currentPlayer==AI_PLAYER){
+            if(checkWin(gameState)) {
+                surface=SDL_LoadBMP("/home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/assets/image/tic_win.bmp");
+                texture=SDL_CreateTextureFromSurface(renderer,surface);
+                SDL_FreeSurface(surface);
+                SDL_RenderClear(renderer);
+                SDL_RenderCopy(renderer,texture,NULL,&imager);
+                SDL_RenderPresent(renderer);
                 SDL_Delay(2000);
-            game = SDL_LoadBMP("../../share/doc/assets/image/O_win.bmp");}
-            else game=SDL_LoadBMP("../../share/doc/assets/image/X_win.bmp");
-            if (!game) {
-                printf("Error loading image: %s\n", SDL_GetError());
-}
-            texture = SDL_CreateTextureFromSurface(renderer, game);
-            if (!texture) {
-                printf("Error creating texture: %s\n", SDL_GetError());
-            }    
-            SDL_FreeSurface(game);
-            SDL_RenderClear(renderer);
-            SDL_RenderCopy(renderer, texture, NULL, &imager);
-            SDL_RenderPresent(renderer);
-            SDL_Delay(2000);
-            printf("Player %d wins!\n", gameState->currentPlayer);
-            gameState->isRunning = false;  // Stop the game
-        }  
-        else if (isfull((*gameState)) == 1) {
-            SDL_Delay(1000);
-            game = SDL_LoadBMP("../../share/doc/assets/image/tic_tac_toe_draw.bmp");
-            texture = SDL_CreateTextureFromSurface(renderer, game);
-            if (!texture) {
-    printf("Error creating texture: %s\n", SDL_GetError());
-}
-            SDL_FreeSurface(game);
+                printf("Player %d wins!\n", gameState->currentPlayer);
+                gameState->isRunning = false;  // Stop the game
+            }  
+            else if (isfull(gameState)==1)
+        {      SDL_Delay(1000);
+            surface=SDL_LoadBMP("/home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/assets/image/tic_tac_toe_draw.bmp");
+            texture=SDL_CreateTextureFromSurface(renderer,surface);
+            SDL_FreeSurface(surface);
             SDL_RenderClear(renderer);
             SDL_RenderCopy(renderer, texture, NULL, NULL);
             SDL_RenderPresent(renderer);
-            SDL_Delay(4000);
+                SDL_Delay(4000);
             gameState->isRunning=false;
         }else {
-          if (gameState->currentPlayer == HUMAN_PLAYER) {
-                gameState->currentPlayer = AI_PLAYER;
-                bestMove(gameState);
-                SDL_Delay(300);  // Add a delay so the human move is visible
-                
-                if(WinorNot(gameState))
-                goto  win;
-                /// AI makes a move
-                 // Update the board again after AI move
-                gameState->currentPlayer = HUMAN_PLAYER; // Switch back to human after AI move
-            }    
-        } 
+                gameState->currentPlayer = (gameState->currentPlayer == 1) ? 2 : 1;  // Switch players
+            } 
         }
     }
 
@@ -320,28 +263,6 @@ void playSong(const char *songName) {
    
 }
 
-int WinorNot(GameState* gameState) {
-    int b[3][3];
-memcpy(b, gameState->board, sizeof(b));
-
-    
-    // Check rows and columns
-    for (int i = 0; i < 3; i++) {
-        if ((b[i][0] == b[i][1] && b[i][1] == b[i][2] && b[i][0] != 0) ||
-            (b[0][i] == b[1][i] && b[1][i] == b[2][i] && b[0][i] != 0)) {
-            return gameState->currentPlayer;
-        }
-    }
-    
-    // Check diagonals
-    if ((b[0][0] == b[1][1] && b[1][1] == b[2][2] && b[0][0] != 0) ||
-        (b[0][2] == b[1][1] && b[1][1] == b[2][0] && b[0][2] != 0)) {
-        return gameState->currentPlayer;
-    }
-
-    
-    return 0;  // No winner yet
-}
     /** to draw a thick O
      * it is called by draw_O
      */
@@ -421,8 +342,8 @@ memcpy(b, gameState->board, sizeof(b));
      * @param gameState :  the current state of the game
      * 
      */
-    int isfull(GameState game){
-        int (*a)[3]=game.board;
+    int isfull(GameState* game){
+        int (*a)[3]=game->board;
         int c = 0;
         for (int i = 0; i < 3; i++){
             for (int j = 0; j < 3; j++){
@@ -585,209 +506,10 @@ memcpy(b, gameState->board, sizeof(b));
         return 0;
     }
 
-
-
-
-
-
-
-
-void bestMove(GameState* gameState) {
-    int bestScore = INT_MIN;
-    int moveRow = -1, moveCol = -1;
-
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            if (gameState->board[i][j] == 0) { // Check empty spot
-                gameState->board[i][j] = AI_PLAYER; // Simulate AI move
-                int score = miniMax(gameState, 0, 0); // Call minimax
-                gameState->board[i][j] = 0; // Undo move
-
-                if (score > bestScore) { // Find max score
-                    bestScore = score;
-                    moveRow = i;
-                    moveCol = j;
-                }
-            }
-        }
-    }
-
-    if (moveRow != -1 && moveCol != -1) 
-    {
-        gameState->board[moveRow][moveCol] = AI_PLAYER; // Make the best move
-    }
-    SDL_Delay(700);
-}
-
-
-
-
-int miniMax(GameState *gamestate, int depth, int isMax) {
-    int score = evaluate(*gamestate);
-    // Base cases (terminal states)
-    if (score == 10) return score - depth; // Favor quick wins
-    if (score == -10) return score + depth; // Delay opponent win
-    if (isfull(*gamestate)) return 0; // Draw
-    
-    // Maximizing player (AI)
-    if (isMax) {
-        int best = INT_MIN;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (gamestate->board[i][j] == 0) {  // Check empty space
-                    gamestate->board[i][j] = AI_PLAYER;
-                    best = fmax(best, miniMax(gamestate, depth + 1, 0));
-                    gamestate->board[i][j] = 0; // Undo move
-                }
-            }
-        }
-        return best;
-    } 
-    // Minimizing player (Human)
-    else {
-        int best = INT_MAX;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (gamestate->board[i][j] == 0) {  // Check empty space
-                    gamestate->board[i][j] = HUMAN_PLAYER;
-                    best = fmin(best, miniMax(gamestate, depth + 1, 1));
-                    gamestate->board[i][j] = 0; // Undo move
-                }
-            }
-        }
-        return best;
-    }
-}
-
-int evaluate(GameState game) {
-    // Check rows for victory
-
-    for (int row = 0; row < 3; row++) {
-        if (game.board[row][0] == game.board[row][1] &&
-            game.board[row][1] == game.board[row][2]) {
-            if (game.board[row][0] == AI_PLAYER) return +10;
-            else if (game.board[row][0] == HUMAN_PLAYER) return -10;
-        }
-    }
-
-    // Check columns for victory
-    for (int col = 0; col < 3; col++) {
-        if (game.board[0][col] == game.board[1][col] &&
-            game.board[1][col] == game.board[2][col]) {
-            if (game.board[0][col] == AI_PLAYER) return +10;
-            else if (game.board[0][col] == HUMAN_PLAYER) return -10;
-        }
-    }
-
-    // Check diagonals for victory
-    if (game.board[0][0] == game.board[1][1] &&
-        game.board[1][1] == game.board[2][2]) {
-        if (game.board[0][0] == AI_PLAYER) return +10;
-        else if (game.board[0][0] == HUMAN_PLAYER) return -10;
-    }
-    if (game.board[0][2] == game.board[1][1] &&
-        game.board[1][1] == game.board[2][0]) {
-        if (game.board[0][2] == AI_PLAYER) return +10;
-        else if (game.board[0][2] == HUMAN_PLAYER) return -10;
-    }
-
-    return 0; // No winner
-}
-
-
-
-void easyAi(GameState* GameState){
-    int row,col;
-    do{
-        row=rand()%3;
-        col=rand()%3;
-
-    }while(GameState->board[row][col]!=0);
-    GameState->board[row][col]=GameState->currentPlayer;
-
-}
-
-
-void mediumAI(GameState* GameState) {
-    int bestRow = -1, bestCol = -1;
-    float bestScore = -1;
-
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            if (GameState->board[i][j] == 0) {  // Empty cell
-                float score = get_score(GameState, i, j);
-                if (score > bestScore) {  // Find the best score
-                    bestScore = score;
-                    bestRow = i;
-                    bestCol = j;
-                }
-            }
-        }
-    }
-
-    // Place AI move in the best position found
-    if (bestRow != -1 && bestCol != -1) {
-        GameState->board[bestRow][bestCol] = GameState->currentPlayer;
-    }
-}
-
-//get a min heap of the scores
-
-float get_score(GameState* GameState, int row, int col) {
-    float scr = 0;
-    int player = GameState->currentPlayer;
-
-    // Check boundaries before accessing board elements
-    if (row > 0 && GameState->board[row - 1][col] == player) scr++;  // Top
-    if (row < 2 && GameState->board[row + 1][col] == player) scr++;  // Bottom
-    if (col > 0 && GameState->board[row][col - 1] == player) scr++;  // Left
-    if (col < 2 && GameState->board[row][col + 1] == player) scr++;  // Right
-
-    if (row > 0 && col > 0 && GameState->board[row - 1][col - 1] == player) scr++;  // Top-left
-    if (row > 0 && col < 2 && GameState->board[row - 1][col + 1] == player) scr++;  // Top-right
-    if (row < 2 && col > 0 && GameState->board[row + 1][col - 1] == player) scr++;  // Bottom-left
-    if (row < 2 && col < 2 && GameState->board[row + 1][col + 1] == player) scr++;  // Bottom-right
-
-    return pow(scr, 0.5);  // Square root of score
-}
-void toLowerStr(char *str) {
-    for (int i = 0; str[i] != '\0'; i++) {
-        str[i] = tolower(str[i]);
-    }
-}
-
-int aiChose(char choice[10],GameState* GameState){
- toLowerStr(choice);
-    if(strcmp("easy",choice)==0){
-        easyAi(GameState);     
-    }
-    else if (strcmp("medium",choice)==0){
-        mediumAI(GameState);
-    }  
-else if(strcmp("hard",choice)){
-    bestMove(GameState);
-    return 3;
-}
-else{
-    printf("enter a valid choice");
-    return 0;
-} 
-}
-
-
-
-
-
-
-
-
-
     #ifdef _WIN32
     #include <windows.h>
 
     int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
         return main(__argc, __argv);
     }
- 
-
-#endif
+    #endif

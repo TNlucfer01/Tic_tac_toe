@@ -1,5 +1,5 @@
 [Desktop Entry]
-Version=2.2
+Version=1.1
 Name=Tic Tac Toe
 Comment=Play Tic Tac Toe
 Exec=/usr/local/bin/tic_tac_toe

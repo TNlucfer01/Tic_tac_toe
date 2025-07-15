@@ -17,7 +17,7 @@ Source: "SDL2.dll*"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Z:/home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/assets\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs
 
 ; Copy the icon file, no extra folder structure
-Source: "Z:/home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/a/src/app.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "app.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Tic-Tac-Toe Game"; Filename: "{app}\a.exe"; IconFilename: "{app}\app.ico"
