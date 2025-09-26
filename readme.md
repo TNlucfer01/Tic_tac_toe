@@ -89,7 +89,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Thanks to the SDL2 community for their amazing resources.
 -To myself
 
-```
+
 
 Feel free to adjust any section according to your project specifics! Let me know if you need further customization or additional sections!
   
