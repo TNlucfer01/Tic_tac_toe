@@ -1,100 +1,74 @@
-
-
-
-
 # Tic Tac Toe Game in C
 
 ## Introduction
 
-Hello everyone! This is a mini project I created while learning the C programming language. It’s a simple Tic Tac Toe game where two users play against each other.
+A simple two-player Tic Tac Toe game built with C, using SDL2 for graphics and Wayland for display server support (Linux). Players take turns marking X or O on a 3x3 grid, aiming for three in a row to win.
 
 ## Prerequisites
 
-To play this game, you need to have **SDL2 (Simple DirectMedia Layer)** and **Wayland** (a display server protocol) installed on your system.
+- **SDL2**: Download from [https://www.libsdl.org/download-2.0.php](https://www.libsdl.org/download-2.0.php)
+- **SDL2_ttf**: Download from [https://github.com/libsdl-org/SDL_ttf/releases](https://github.com/libsdl-org/SDL_ttf/releases)
+- **Wayland**: Install from [https://wayland.freedesktop.org/](https://wayland.freedesktop.org/) (Linux only)
+- **Inno Setup**: Download from [https://jrsoftware.org/isdl.php](https://jrsoftware.org/isdl.php) (Windows only)
 
-- You can download SDL2 from the [official SDL2 website](https://www.libsdl.org/).
-- You can download Wayland from the [official Wayland website](https://wayland.freedesktop.org/).
+## Installation
 
-## Installation Instructions
-
-### For Linux
-
-You can install SDL2 and Wayland using the following commands:
-
-```bash
-sudo apt update
-sudo apt install libsdl2-dev
-sudo apt install wayland
-sudo apt install libwayland-dev
-```
-
-### For Windows
-
-1. Clone the vcpkg repository:
-
+### Linux
+1. Install dependencies:
    ```bash
-   git clone https://github.com/microsoft/vcpkg.git
-   cd vcpkg
-   .\bootstrap-vcpkg.bat
+   sudo apt update
+   sudo apt install libsdl2-dev libwayland-dev libsdl2-ttf-dev make
+   ```
+2. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd <repository-name>
+   ```
+3. Build and install:
+   ```bash
+   ./build.sh
+   sudo dpkg -i <package-name>.deb
    ```
 
-2. Install SDL2 and SDL2_ttf using the following commands in the vcpkg terminal:
-
+### Windows
+1. Clone the repository:
    ```bash
-   vcpkg install sdl2
-   vcpkg install sdl2-ttf
+   git clone <repository-url>
+   cd <repository-name>
    ```
+2. Download and install [Inno Setup](https://jrsoftware.org/isdl.php).
+3. Run the installer script:
+   ```bash
+   cd src
+   iscc project.iss
+   ```
+4. Locate the generated `.exe` in the `Windows/` directory and run it to install and play.
 
-## Verifying the Installation
-
-After installation, you can verify that SDL2 and SDL2_ttf are installed correctly by running:
-
-```bash
-sdl2-config --version
-```
+## Contributing
+For development or contributions, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## How to Play
-
-1. Compile the code using the following command:
-   ```bash
-   gcc -o tic_tac_toe main.c `sdl2-config --cflags --libs` -lSDL2_ttf
-   ```
-
-2. Run the game:
-   ```bash
-   ./tic_tac_toe
-   ```
-
-3. Players take turns placing their marks (X or O) on the 3x3 grid. The first player to get three marks in a row (horizontally, vertically, or diagonally) wins the game.
-
-4. If all nine squares are filled without a winner, the game ends in a draw.
+1. Launch the game:
+   - Linux: Run the installed application.
+   - Windows: Run the installed `.exe`.
+2. Players alternate placing X or O on the 3x3 grid.
+3. Win by aligning three marks horizontally, vertically, or diagonally.
+4. Game ends in a draw if all squares are filled without a winner.
 
 ## Features
-
-- Simple and intuitive user interface
-- Two-player mode
-- Reset functionality to restart the game
+- Simple graphical interface using SDL2.
+- Two-player mode.
+- Reset option to start a new game.
 
 ## Troubleshooting
-
-- Ensure that SDL2 and Wayland are installed correctly.
-- If you encounter any issues, check for errors in the terminal and make sure all dependencies are installed.
+- Ensure all dependencies (SDL2, SDL2_ttf, Wayland for Linux, Inno Setup for Windows) are installed.
+- Check terminal for errors during compilation or installation.
+- Verify library paths for linking issues.
 
 ## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0 - see the [COPYING](./COPYING) file for details.
 
 ## Acknowledgments
-
-- Thanks to the SDL2 community for their amazing resources.
--To myself
-
-
-
-Feel free to adjust any section according to your project specifics! Let me know if you need further customization or additional sections!
-  
-
-
-License
-This project is licensed under the GNU General Public License v3.0 - see the [COPYING](./COPYING) file for details.
-  
+- SDL2 community for their resources.
+- Wayland documentation for display server support.
+- Inno Setup for Windows installer support.
