@@ -4,7 +4,7 @@ AppVerName=My Tic-Tac-Toe Game Version 1.0 by AATHI S
 AppVersion=1.0
 DefaultDirName={pf}\MyTicTacToeGame
 DefaultGroupName=Tic-Tac-Toe Game
-OutputDir=../../../../Windows/Build/
+OutputDir=./Build/
 OutputBaseFilename=TicTacToeInstaller
 
 [Files]

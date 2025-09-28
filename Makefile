@@ -1,5 +1,5 @@
 # Variables for source file, output, and compiler options
-SRC = /home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/src/eg.c
+SRC = /home/darkemperor/aathi/my-learnig-path-/TIC_TAC_TOE/usr/share/doc/src/Ai.c
 OUTPUT = tic_tac_toe
 
 # Compiler flags for Windows and Linux
@@ -22,7 +22,7 @@ linux:
 # Target for Windows
 windows:
 	@echo "Compiling for Windows..."
-	x86_64-w64-mingw32-gcc -o $(OUTPUT).exe $(SRC) $(SDL2_CFLAGS) $(SDL2_LIBS_WINDOWS) -Dmain=SDL_main
+	x86_64-w64-mingw32-gcc -o $(OUTPUT).exe $(SRC) $(SDL2_CFLAGS) $(SDL2_LIBS_WINDOWS) -Dmain=SDL_main -lm
 	@echo "Done. You can run the executable: $(OUTPUT).exe"
 
 # Detect the operating system and choose the appropriate target
